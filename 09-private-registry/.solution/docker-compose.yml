@@ -1,0 +1,9 @@
+version: "3"
+
+services:
+    registry:
+      image: registry:2
+      ports:
+        - 2099:5000
+      volumes:
+        - "${PWD}/data:/var/lib/registry"

@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+
+XDEBUG_CONFIG_FILE=/usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
+
+if [ "$ENV" = "dev" ]; then
+    if [ -n "$XDEBUG_REMOTE_HOST" ]; then
+        echo "[ xdebug ] Set remote host to $XDEBUG_REMOTE_HOST"
+        sed -i "s/xdebug.remote_host\s*=\s*.*/xdebug.remote_host=$XDEBUG_REMOTE_HOST/" "$XDEBUG_CONFIG_FILE"
+    fi
+    if [ -n "$XDEBUG_REMOTE_PORT" ]; then
+        echo "[ xdebug ] Set remote port to $XDEBUG_REMOTE_PORT"
+        sed -i "s/xdebug.remote_port\s*=\s*.*/xdebug.remote_port=$XDEBUG_REMOTE_PORT/" "$XDEBUG_CONFIG_FILE"
+    fi
+else
+    echo "[ xdebug ] Disabled"
+    sed -i "1s/^/;/" "$XDEBUG_CONFIG_FILE"
+fi
+
+if [ "${1#-}" != "$1" ]; then
+    set -- php-fpm "$@"
+fi
+
+exec "$@"
